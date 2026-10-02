@@ -1,0 +1,8 @@
+git add .gitignore
+git commit -m "chore: initialize repository and gitignore"
+
+git add SETUP_ENV.md
+git commit -m "docs: add environment setup guide and troubleshooting for windows powershell"
+
+git add src/
+git commit -m "feat: add initial state graph implementation in src/main.py"

@@ -1,0 +1,40 @@
+mkdir AI-MultiAgent-Core
+cd AI-MultiAgent-Core
+git init
+
+Crea el archivo .gitignore:
+.venv/
+__pycache__/
+*.pyc
+.env
+.idea/
+.vscode/
+
+python -m venv .venv
+# En Linux/macOS:
+source .venv/bin/activate
+# En Windows (PowerShell):
+# .venv\Scripts\Activate.ps1
+
+pip install --upgrade pip
+pip install langgraph langchain-google-genai python-dotenv pydantic
+
+py --version
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Crear y Activar el Entorno Virtual en Windows
+py -m venv .venv
+
+Para activar el entorno en Windows PowerShell (sin usar source):
+.\.venv\Scripts\Activate.ps1
+
+Actualizar pip e Instalar las Dependencias
+python -m pip install --upgrade pip
+pip install langgraph langchain-google-genai python-dotenv pydantic
+
+Rol de trabajo
+Lead AI & Software Architect
+
+mkdir src
+New-Item -Path "src\main.py" -ItemType File
