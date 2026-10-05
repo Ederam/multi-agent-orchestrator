@@ -1,6 +1,15 @@
-.venv/
-__pycache__/
-*.pyc
-.env
 .idea/
 .vscode/
+
+# Entornos virtuales de Python
+venv/
+.venv/
+env/
+
+# Archivos de configuración con claves secretas
+.env
+*.env
+
+# Caché de Python
+__pycache__/
+*.pyc

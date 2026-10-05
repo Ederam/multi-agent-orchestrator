@@ -6,3 +6,23 @@ git commit -m "docs: add environment setup guide and troubleshooting for windows
 
 git add src/
 git commit -m "feat: add initial state graph implementation in src/main.py"
+
+## Vinculacion a remoto nuevo
+# 1. Inicializa el repositorio Git si aún no lo has hecho
+# git init
+
+# 2. Agrega todos los archivos al área de preparación (staging)
+git add .
+
+# 3. Crea el primer commit de confirmación
+git commit -m "feat: inicializacion de arquitectura base del sistema multi-agente"
+
+# 4. Asegura que la rama principal se llame main
+git branch -M main
+
+# 5. Vincula tu repositorio local con el repositorio de GitHub
+# (Reemplaza la URL por la de tu repositorio)
+git remote add origin https://github.com/Ederam/multi-agent-orchestrator.git
+
+# 6. Sube los cambios al remoto
+git push -u origin main
