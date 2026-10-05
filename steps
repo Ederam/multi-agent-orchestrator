@@ -71,3 +71,7 @@ Arista condicional
                        |    END Node     |
                        +-----------------+
 
+Instalar el SDK de Google GenAI / LangChain Gemini:
+
+Bash
+pip install langchain-google-genai python-dotenv

@@ -159,3 +159,6 @@ PowerShell
 ssh -T git@github.com
 
 git push -u origin main
+
+git add src/main.py
+git commit -m "feat: integrar cliente ChatGoogleGenerativeAI y nodo gemini_enricher con manejo de fallbacks"
