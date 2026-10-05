@@ -8,21 +8,100 @@ git add src/
 git commit -m "feat: add initial state graph implementation in src/main.py"
 
 ## Vinculacion a remoto nuevo
+
 # 1. Inicializa el repositorio Git si aún no lo has hecho
+
 # git init
 
 # 2. Agrega todos los archivos al área de preparación (staging)
+
 git add .
 
 # 3. Crea el primer commit de confirmación
+
 git commit -m "feat: inicializacion de arquitectura base del sistema multi-agente"
 
 # 4. Asegura que la rama principal se llame main
+
 git branch -M main
 
 # 5. Vincula tu repositorio local con el repositorio de GitHub
+
 # (Reemplaza la URL por la de tu repositorio)
+
 git remote add origin https://github.com/Ederam/multi-agent-orchestrator.git
 
 # 6. Sube los cambios al remoto
+
+git push -u origin main
+
+Error Subiendo al remoto
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> ## Vinculacion a remoto nuevo
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 1. Inicializa el repositorio Git si aún no lo has hecho
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # git init
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core>
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 2. Agrega todos los archivos al área de preparación (staging)
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git add .
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core>
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 3. Crea el primer commit de confirmación
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git commit -m "feat: inicializacion de arquitectura base del sistema multi-agente"
+[master a8e5c32] feat: inicializacion de arquitectura base del sistema multi-agente
+2 files changed, 33 insertions(+), 4 deletions(-)
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core>
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 4. Asegura que la rama principal se llame main
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git branch -M main
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core>
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 5. Vincula tu repositorio local con el repositorio de GitHub
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # (Reemplaza la URL por la de tu repositorio)
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git remote add origin https://github.com/Ederam/multi-agent-orchestrator.git
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core>
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> # 6. Sube los cambios al remoto
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git push -u origin main
+fatal: unable to access 'https://github.com/Ederam/multi-agent-orchestrator.git/': Failed to connect to github.com port 443 after 21173 ms: Could not connect to server
+
+Cambia la URL del remoto a SSH:
+
+PowerShell
+git remote set-url origin git@github.com:Ederam/multi-agent-orchestrator.git
+
+git push -u origin main
+
+Nuevo fallo
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git push -u origin main
+ssh: connect to host github.com port 22: Connection timed out
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+## Limpiar configuraciones de proxy obsoletas en Git
+
+## Si anteriormente configuraste un proxy en Git, este puede estar bloqueando la solicitud:
+
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+# 1.Verificar el proxy en la configuración de Git:1 min.Ejecuta el siguiente comando para revisar si Git tiene asignado un proxy global o local:
+
+git config --global --get http.proxy
+git config --global --get https.proxy
+
+# Cómo verificar: Si el comando no devuelve nada, Git no tiene ningún proxy configurado. Si devuelve una URL (ej. [http://127.0.0.1:8080](http://127.0.0.1:8080)), hay un proxy activo manejando tus peticiones.
+
+# 2.Verificar el proxy del sistema en Windows:1 min.
+
+# Comprueba si Windows tiene un proxy configurado a nivel de sistema operativo ejecutando:
+
+Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' | Select-Object ProxyEnable, ProxyServer
+
+# 3.Probar la conectividad del puerto 443 a GitHub
+
+# Prueba si la red o un firewall bloquea la salida HTTPS (puerto 443) hacia GitHub:
+
+Test-NetConnection -ComputerName github.com -Port 443
+
+git add .
+git commit -m "first commit to remote"
+git branch -M main
+git remote add origin https://github.com/Ederam/multi-agent-orchestrator.git
 git push -u origin main
