@@ -105,3 +105,16 @@ git commit -m "first commit to remote"
 git branch -M main
 git remote add origin https://github.com/Ederam/multi-agent-orchestrator.git
 git push -u origin main
+
+Agregar tu clave SSH a tu cuenta de GitHub
+1.Copiar tu clave SSH pública:1 min.
+Abre tu terminal de PowerShell y ejecuta este comando para mostrar y copiar tu clave pública:
+Get-Content ~/.ssh/id_ed25519.pub
+
+ssh-keygen -t ed25519 -C "eramirezc1@ucentral.edu.co"
+
+git add .
+git commit -m "first commit to remote"
+git branch -M main
+git remote add origin git@github.com:Ederam/multi-agent-orchestrator.git
+git push -u origin main
