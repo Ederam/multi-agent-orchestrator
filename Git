@@ -118,3 +118,44 @@ git commit -m "first commit to remote"
 git branch -M main
 git remote add origin git@github.com:Ederam/multi-agent-orchestrator.git
 git push -u origin main
+
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git add .
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git commit -m "first commit to remote"
+[main c6690bd] first commit to remote
+1 file changed, 13 insertions(+)
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git branch -M main
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git remote add origin git@github.com:Ederam/multi-agent-orchestrator.git
+error: remote origin already exists.
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> git push -u origin main
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+
+ssh-keygen -t ed25519 -C "Ederam"
+
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+
+https://github.com/settings/ssh/new
+
+Paso 3: Agregar la clave a tu cuenta de GitHub
+Abre tu navegador y ve a: https://github.com/settings/ssh/new
+
+Inicia sesión con la cuenta Ederam (si no estás logueado).
+
+En el campo Title, pon un nombre descriptivo (por ejemplo: Laptop Dev).
+
+En el campo Key type, déjalo en Authentication Key.
+
+En el campo Key, presiona Ctrl + V para pegar la clave que copiaste.
+
+Haz clic en Add SSH key.
+
+Validar la conexión y hacer el Push
+Prueba que GitHub ya te reconozca ejecutando:
+
+PowerShell
+ssh -T git@github.com
+
+git push -u origin main
