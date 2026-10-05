@@ -15,3 +15,11 @@
 - **Politica de Ejecución:** Para permitir scripts `.ps1` locales no firmados, se requirió elevar la política a nivel de usuario:
   `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`.
 ```
+
+## ADR-003: Implementación de Enrutamiento Dinámico con Aristas Condicionales
+
+- **Contexto:** Se requiere que el flujo del sistema no sea puramente secuencial, sino que tome decisiones de ramificación basadas en la inspección del estado (`AgentState`).
+- **Decisión:** Implementar funciones puras de enrutamiento (_Router_) y enlazarlas mediante `workflow.add_conditional_edges()`.
+- **Consecuencia:**
+  1. Permite bifurcar la ejecución hacia nodos especializados (`tech_support` vs `general_info`).
+  2. La función del router mapea cadenas de caracteres a los identificadores exactos de los nodos de destino registrados en el grafo.
