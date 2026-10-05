@@ -1,130 +1,151 @@
 import os
-from typing import Literal, TypedDict
+from typing import Annotated, Literal, TypedDict, List
 from dotenv import load_dotenv
+import operator
 from langgraph.graph import StateGraph, START, END
 
 load_dotenv()
 
 # ---------------------------------------------------------------------------
-# 1. State Definition
+# 1. Definición del Estado con Acumulador (Annotated + operator.add)
 # ---------------------------------------------------------------------------
 class AgentState(TypedDict):
     input_message: str
-    category: str  # "TECH", "GENERAL", o "UNKNOWN"
-    processed_message: str
-    step_count: int
+    cleaned_data: str
+    audit_log: Annotated[List[str], operator.add]  # Acumula logs sin sobrescribir los anteriores
+    retry_count: int
+    is_valid: bool
 
 
 # ---------------------------------------------------------------------------
-# 2. Node Implementations
+# 2. Nodos de Procesamiento
 # ---------------------------------------------------------------------------
-def classifier_node(state: AgentState) -> dict:
-    """Nodo 1: Analiza el mensaje y determina la categoría."""
-    text = state["input_message"].lower()
+def input_cleaner_node(state: AgentState) -> dict:
+    """Nodo 1: Sanea la entrada y registra la acción en el log acumulativo."""
+    raw_text = state["input_message"].strip()
+    return {
+        "cleaned_data": raw_text,
+        "audit_log": [f"PASO 1: Entrada saneada -> '{raw_text}'"]
+    }
+
+
+def validator_node(state: AgentState) -> dict:
+    """
+    Nodo 2: Valida si los datos cumplen con la regla de negocio.
+    Regla: El mensaje debe tener más de 10 caracteres.
+    """
+    current_text = state["cleaned_data"]
+    attempts = state.get("retry_count", 0) + 1
     
-    if any(keyword in text for keyword in ["error", "bug", "python", "code", "database"]):
-        detected_category = "TECH"
-    else:
-        detected_category = "GENERAL"
+    # Simulación de regla de validación
+    valid = len(current_text) >= 10
 
     return {
-        "category": detected_category,
-        "step_count": state.get("step_count", 0) + 1
+        "is_valid": valid,
+        "retry_count": attempts,
+        "audit_log": [f"PASO 2 (Intento {attempts}): Validación {'EXITOSA' if valid else 'FALLIDA'}."]
     }
 
 
-def tech_support_node(state: AgentState) -> dict:
-    """Nodo 2A: Especializado en problemas técnicos."""
+def auto_fixer_node(state: AgentState) -> dict:
+    """Nodo 3: Intenta corregir el texto si la validación falló agregando padding."""
+    fixed_text = state["cleaned_data"] + " [COMPLETADO]"
     return {
-        "processed_message": f"[SOPORTE TÉCNICO]: Se ha registrado el ticket técnico para '{state['input_message']}'.",
-        "step_count": state["step_count"] + 1
+        "cleaned_data": fixed_text,
+        "audit_log": [f"PASO 3: Corrección automática aplicada -> '{fixed_text}'"]
     }
 
 
-def general_info_node(state: AgentState) -> dict:
-    """Nodo 2B: Especializado en consultas generales."""
+def final_processor_node(state: AgentState) -> dict:
+    """Nodo 4: Procesa el mensaje validado para su salida."""
     return {
-        "processed_message": f"[ATENCIÓN GENERAL]: Respuesta general para '{state['input_message']}'.",
-        "step_count": state["step_count"] + 1
+        "audit_log": ["PASO 4: Procesamiento final completado con éxito."]
     }
 
 
 # ---------------------------------------------------------------------------
-# 3. Router Function (Lógica para la Arista Condicional)
+# 3. Función del Router / Arista Condicional (Self-Correction Loop)
 # ---------------------------------------------------------------------------
-def route_by_category(state: AgentState) -> Literal["tech_support", "general_info"]:
+def check_validation_route(state: AgentState) -> Literal["final_processor", "auto_fixer", "fail_exit"]:
     """
-    Función de decisión pura: Lee el estado y retorna el NOMBRE EXACTO
-    del nodo hacia el cual debe dirigirse el flujo.
+    Evalúa el estado para decidir:
+    - Si es válido -> Avanzar al procesador final.
+    - Si es inválido y reintentos < 2 -> Ir al nodo de auto-corrección.
+    - Si supera los reintentos -> Salir con fallo.
     """
-    if state["category"] == "TECH":
-        return "tech_support"
-    return "general_info"
+    if state["is_valid"]:
+        return "final_processor"
+    
+    if state["retry_count"] < 2:
+        return "auto_fixer"
+        
+    return "fail_exit"
 
 
 # ---------------------------------------------------------------------------
-# 4. Graph Assembly
+# 4. Ensamblado del Grafo
 # ---------------------------------------------------------------------------
 workflow = StateGraph(AgentState)
 
 # Registrar Nodos
-workflow.add_node("classifier", classifier_node)
-workflow.add_node("tech_support", tech_support_node)
-workflow.add_node("general_info", general_info_node)
+workflow.add_node("input_cleaner", input_cleaner_node)
+workflow.add_node("validator", validator_node)
+workflow.add_node("auto_fixer", auto_fixer_node)
+workflow.add_node("final_processor", final_processor_node)
 
 # Flujo Inicial
-workflow.add_edge(START, "classifier")
+workflow.add_edge(START, "input_cleaner")
+workflow.add_edge("input_cleaner", "validator")
 
-# ARISTA CONDICIONAL:
-# Del nodo 'classifier', evaluamos con 'route_by_category' a qué nodo ir.
+# Arista Condicional con Bucle de Auto-Corrección
 workflow.add_conditional_edges(
-    "classifier",
-    route_by_category,
+    "validator",
+    check_validation_route,
     {
-        "tech_support": "tech_support",
-        "general_info": "general_info"
+        "final_processor": "final_processor",
+        "auto_fixer": "auto_fixer",
+        "fail_exit": END
     }
 )
 
-# Cierre de flujos hacia el final
-workflow.add_edge("tech_support", END)
-workflow.add_edge("general_info", END)
+# Arista de retorno desde el fixer hacia la re-validación (Ciclo/Bucle)
+workflow.add_edge("auto_fixer", "validator")
+
+# Salida del procesador final
+workflow.add_edge("final_processor", END)
 
 app = workflow.compile()
 
 
 # ---------------------------------------------------------------------------
-# 5. Execution Test
+# 5. Ejecución y Pruebas
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Prueba 1: Mensaje Técnico
-    tech_input: AgentState = {
-        "input_message": "Tengo un bug en el código de Python con la database",
-        "category": "",
-        "processed_message": "",
-        "step_count": 0
+    print("\n==================================================")
+    print("      PRUEBA 1: Entrada Válida desde el Inicio")
+    print("==================================================")
+    state_valid: AgentState = {
+        "input_message": "  Mensaje largo de prueba que pasa directo  ",
+        "cleaned_data": "",
+        "audit_log": [],
+        "retry_count": 0,
+        "is_valid": False
     }
+    result_1 = app.invoke(state_valid)
+    for log in result_1["audit_log"]:
+        print(f"  -> {log}")
 
-    result_tech = app.invoke(tech_input)
-
-    print("\n--- PRUEBA 1 (Caso Técnico) ---")
-    print(f"Input     : {tech_input['input_message']}")
-    print(f"Categoría : {result_tech['category']}")
-    print(f"Resultado : {result_tech['processed_message']}")
-    print(f"Pasos     : {result_tech['step_count']}")
-
-    # Prueba 2: Mensaje General
-    general_input: AgentState = {
-        "input_message": "Hola, ¿cuál es el horario de atención?",
-        "category": "",
-        "processed_message": "",
-        "step_count": 0
+    print("\n==================================================")
+    print("      PRUEBA 2: Entrada Corta (Activa Bucle de Corrección)")
+    print("==================================================")
+    state_short: AgentState = {
+        "input_message": "  Hola  ",
+        "cleaned_data": "",
+        "audit_log": [],
+        "retry_count": 0,
+        "is_valid": False
     }
-
-    result_general = app.invoke(general_input)
-
-    print("\n--- PRUEBA 2 (Caso General) ---")
-    print(f"Input     : {general_input['input_message']}")
-    print(f"Categoría : {result_general['category']}")
-    print(f"Resultado : {result_general['processed_message']}")
-    print(f"Pasos     : {result_general['step_count']}\n")
+    result_2 = app.invoke(state_short)
+    for log in result_2["audit_log"]:
+        print(f"  -> {log}")
+    print("==================================================\n")

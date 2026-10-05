@@ -38,3 +38,36 @@ Lead AI & Software Architect
 
 mkdir src
 New-Item -Path "src\main.py" -ItemType File
+
+## Asegurar que el entorno este activo
+.\.venv\Scripts\Activate.ps1
+
+## ejecucion del programa
+python src/main.py
+
+Arista condicional
++-------------------+
+                    |   START Node      |
+                    +-------------------+
+                              |
+                              v
+                    +-------------------+
+                    |   Router Node     |  (Clasifica la intención)
+                    +-------------------+
+                              |
+                   Arista Condicional (Edge)
+                  /                         \
+       if type == "TECH"              if type == "GENERAL"
+                /                             \
+               v                               v
+    +--------------------+           +--------------------+
+    | Tech Support Node  |           | General Info Node  |
+    +--------------------+           +--------------------+
+                \                             /
+                 +--------------+------------+
+                                |
+                                v
+                       +-----------------+
+                       |    END Node     |
+                       +-----------------+
+
