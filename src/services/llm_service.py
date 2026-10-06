@@ -69,6 +69,35 @@ class MockLLMClient:
             "recommended_action": recommendation
         }
 
+    def format_notification(self, report: dict) -> dict:
+        """
+        Agente Notificador: Convierte el reporte de incidente en una plantilla
+        de alerta optimizada para el canal de comunicación del equipo técnico.
+        """
+        service = report.get("service_name", "Servicio Desconocido")
+        severity = report.get("calculated_severity", "P3 - MENOR")
+        action = report.get("recommended_action", "Sin acción requerida")
+
+        channel = "#incidentes-criticos" if "CRÍTICA" in severity else "#alertas-operativas"
+        
+        subject = f"[ALERTA {severity}] Incidente operativo en {service}"
+        body = (
+            f"🚨 *DETECCIÓN AUTOMÁTICA DE INCIDENTE*\n"
+            f"• *Servicio:* {service}\n"
+            f"• *Severidad:* {severity}\n"
+            f"• *Latencia observada:* {report.get('latency_observed')}\n"
+            f"• *Tasa de fallos:* {report.get('error_rate')}\n"
+            f"• *Impacto:* {report.get('business_impact')}\n"
+            f"• *Acción recomendada:* {action}\n"
+        )
+
+        return {
+            "target_channel": channel,
+            "subject": subject,
+            "message_body": body,
+            "delivered": True
+        }
+
 def get_gemini_client():
     return MockLLMClient(model=settings.MODEL_NAME)
 

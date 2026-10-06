@@ -36,3 +36,18 @@ def incident_synthesizer_node(state: AgentState) -> dict:
             f"PASO 4.2 (Synthesizer Agent): Reporte estructurado generado con Severidad: {report['calculated_severity']}."
         ]
     }
+
+def notification_agent_node(state: AgentState) -> dict:
+    """
+    Nodo 4.3: Agente Notificador.
+    Toma el reporte estructurado y despacha el mensaje formateado.
+    """
+    report = state.get("incident_report") or {}
+    notification = llm_client.format_notification(report)
+
+    return {
+        "notification_payload": notification,
+        "audit_log": [
+            f"PASO 4.3 (Notification Agent): Alerta despachada exitosamente al canal '{notification['target_channel']}'."
+        ]
+    }

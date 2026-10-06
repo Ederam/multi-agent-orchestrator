@@ -7,7 +7,11 @@ from src.nodes.processing_nodes import (
     tool_execution_node,
     final_processor_node,
 )
-from src.nodes.ai_nodes import gemini_enricher_node, incident_synthesizer_node
+from src.nodes.ai_nodes import (
+    gemini_enricher_node,
+    incident_synthesizer_node,
+    notification_agent_node,
+)
 from src.workflow.router import check_validation_route, route_after_ai
 
 def create_agent_graph():
@@ -21,6 +25,7 @@ def create_agent_graph():
     workflow.add_node("gemini_enricher", gemini_enricher_node)
     workflow.add_node("tool_executor", tool_execution_node)
     workflow.add_node("incident_synthesizer", incident_synthesizer_node)
+    workflow.add_node("notification_agent", notification_agent_node)
     workflow.add_node("final_processor", final_processor_node)
 
     # 2. Conectar Flujo Inicial y Autocorrección
@@ -38,7 +43,7 @@ def create_agent_graph():
     )
     workflow.add_edge("auto_fixer", "validator")
 
-    # 3. Conectar Decisión de Tool Calling
+    # 3. Decisión de Tool Calling
     workflow.add_conditional_edges(
         "gemini_enricher",
         route_after_ai,
@@ -48,9 +53,10 @@ def create_agent_graph():
         }
     )
 
-    # 4. Cadena Multi-Agente: Tool -> Sintetizador -> Cierre
+    # 4. Cadena Multi-Agente: Tool -> Sintetizador -> Notificador -> Cierre
     workflow.add_edge("tool_executor", "incident_synthesizer")
-    workflow.add_edge("incident_synthesizer", "final_processor")
+    workflow.add_edge("incident_synthesizer", "notification_agent")
+    workflow.add_edge("notification_agent", "final_processor")
     workflow.add_edge("final_processor", END)
 
     return workflow.compile()

@@ -103,3 +103,9 @@
 - **Contexto:** Los datos crudos devueltos por las herramientas de diagnóstico no son aptos para la toma de decisiones directas sin un procesamiento semántico que calcule impacto y severidad.
 - **Decisión:** Crear el nodo `incident_synthesizer_node` en la capa de agentes de IA, encargado de correlacionar latencias, tasas de error y estado del circuito para generar un dict estructurado (`incident_report`).
 - **Consecuencia:** Encapsulamiento del razonamiento de diagnóstico en un agente especializado sin sobrecargar al nodo enrutador inicial.
+
+## ADR-012: Implementación del Agente Notificador y Cierre de Pipeline Autónomo
+
+- **Contexto:** La fase de análisis debe concluir con una acción tangible hacia el equipo de soporte o monitoreo.
+- **Decisión:** Implementar el nodo `notification_agent_node`, que toma el dict generado por el sintetizador y lo transforma en un mensaje formateado listo para despacho a canales como Slack, Teams o Email.
+- **Consecuencia:** Cierre de extremo a extremo de un sistema multi-agente autónomo sin intervención humana.
