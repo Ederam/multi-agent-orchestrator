@@ -29,3 +29,9 @@
 - **Contexto:** Mantener todo el grafo, servicios LLM, lógica de nodos y DTOs en un único archivo `main.py` generaba alto acoplamiento e impedía el escalamiento del sistema multi-agente.
 - **Decisión:** Segmentar en capas modulares bajo `src/`: `core` (estado y configuración), `services` (adaptador Gemini), `nodes` (lógica de negocio y llamadas LLM) y `workflow` (ensamblado del grafo y enrutador).
 - **Consecuencia:** Mayor testeabilidad unitaria de nodos, desacoplamiento del cliente de IA y facilidad para agregar nuevos agentes especializados sin modificar el punto de entrada.
+
+## ADR-005: Resolución de Validación SSL para Clientes LLM en Windows
+
+- **Contexto:** Al invocar la API de Gemini desde Windows, Python arrojó `[SSL: CERTIFICATE_VERIFY_FAILED]` debido a la ausencia de certificados raíz accesibles por el runtime estándar de Python.
+- **Decisión:** Instalar la librería `certifi` y definir explícitamente las variables de entorno `SSL_CERT_FILE` y `REQUESTS_CA_BUNDLE` apuntando a `certifi.where()` dentro de `src/services/llm_service.py`.
+- **Consecuencia:** Garantiza la validación segura de certificados TLS/SSL en las peticiones HTTPS salientes de LangChain hacia Google AI Studio.
