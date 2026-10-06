@@ -7,26 +7,26 @@ from src.nodes.processing_nodes import (
     tool_execution_node,
     final_processor_node,
 )
-from src.nodes.ai_nodes import gemini_enricher_node
+from src.nodes.ai_nodes import gemini_enricher_node, incident_synthesizer_node
 from src.workflow.router import check_validation_route, route_after_ai
 
 def create_agent_graph():
     """Construye y compila el flujo completo del sistema multi-agente."""
     workflow = StateGraph(AgentState)
 
-    # Registrar Nodos
+    # 1. Registrar Nodos
     workflow.add_node("input_cleaner", input_cleaner_node)
     workflow.add_node("validator", validator_node)
     workflow.add_node("auto_fixer", auto_fixer_node)
     workflow.add_node("gemini_enricher", gemini_enricher_node)
     workflow.add_node("tool_executor", tool_execution_node)
+    workflow.add_node("incident_synthesizer", incident_synthesizer_node)
     workflow.add_node("final_processor", final_processor_node)
 
-    # Flujo inicial
+    # 2. Conectar Flujo Inicial y Autocorrección
     workflow.add_edge(START, "input_cleaner")
     workflow.add_edge("input_cleaner", "validator")
 
-    # Arista condicional: Validación vs Auto-Corrección
     workflow.add_conditional_edges(
         "validator",
         check_validation_route,
@@ -38,7 +38,7 @@ def create_agent_graph():
     )
     workflow.add_edge("auto_fixer", "validator")
 
-    # Arista condicional: ¿El agente requiere ejecutar una herramienta?
+    # 3. Conectar Decisión de Tool Calling
     workflow.add_conditional_edges(
         "gemini_enricher",
         route_after_ai,
@@ -48,8 +48,9 @@ def create_agent_graph():
         }
     )
 
-    # Tras ejecutar la herramienta, avanza al consolidador final
-    workflow.add_edge("tool_executor", "final_processor")
+    # 4. Cadena Multi-Agente: Tool -> Sintetizador -> Cierre
+    workflow.add_edge("tool_executor", "incident_synthesizer")
+    workflow.add_edge("incident_synthesizer", "final_processor")
     workflow.add_edge("final_processor", END)
 
     return workflow.compile()

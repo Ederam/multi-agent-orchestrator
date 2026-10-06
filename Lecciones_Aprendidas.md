@@ -97,3 +97,9 @@
 - **Contexto:** Los modelos de IA no deben inventar datos operativos; deben consultar herramientas deterministas para obtener telemetría real.
 - **Decisión:** Modelar la intención de herramienta en el estado (`required_tool`), evaluarla mediante una arista condicional (`route_after_ai`) y delegar la ejecución a un nodo dedicado (`tool_executor`).
 - **Consecuencia:** Separación clara entre el razonamiento del agente y la ejecución de infraestructura, garantizando trazabilidad y seguridad.
+
+## ADR-011: Integración del Agente Sintetizador de Incidentes
+
+- **Contexto:** Los datos crudos devueltos por las herramientas de diagnóstico no son aptos para la toma de decisiones directas sin un procesamiento semántico que calcule impacto y severidad.
+- **Decisión:** Crear el nodo `incident_synthesizer_node` en la capa de agentes de IA, encargado de correlacionar latencias, tasas de error y estado del circuito para generar un dict estructurado (`incident_report`).
+- **Consecuencia:** Encapsulamiento del razonamiento de diagnóstico en un agente especializado sin sobrecargar al nodo enrutador inicial.

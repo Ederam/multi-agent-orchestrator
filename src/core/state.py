@@ -5,8 +5,9 @@ class AgentState(TypedDict):
     input_message: str
     cleaned_data: str
     ai_analysis: str
-    required_tool: str | None     # Nombre de la herramienta que el agente solicita ejecutar
-    tool_payload: dict | None      # Datos recuperados tras ejecutar la herramienta
+    required_tool: str | None
+    tool_payload: dict | None
+    incident_report: dict | None  # Reporte estructurado generado por el sintetizador
     audit_log: Annotated[List[str], operator.add]
     retry_count: int
     is_valid: bool

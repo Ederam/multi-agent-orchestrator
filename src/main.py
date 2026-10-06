@@ -9,7 +9,7 @@ from src.workflow.graph import create_agent_graph
 
 def main():
     print("\n=======================================================")
-    print("   SISTEMA MULTI-AGENTE AUTÓNOMO CON TOOL CALLING     ")
+    print("   SISTEMA MULTI-AGENTE AUTÓNOMO: ORQUESTACIÓN Y SÍNTESIS ")
     print("=======================================================")
 
     app = create_agent_graph()
@@ -20,6 +20,7 @@ def main():
         "ai_analysis": "",
         "required_tool": None,
         "tool_payload": None,
+        "incident_report": None,
         "audit_log": [],
         "retry_count": 0,
         "is_valid": False
@@ -31,13 +32,18 @@ def main():
     for log in final_result["audit_log"]:
         print(f"  -> {log}")
 
-    print("\n[DECISIÓN DEL AGENTE]:")
+    print("\n[DECISIÓN DEL AGENTE ROUTER]:")
     print(f"  {final_result['ai_analysis']}")
 
     if final_result.get("tool_payload"):
-        print("\n[DATOS RECUPERADOS POR LA HERRAMIENTA (TOOL PAYLOAD)]:")
+        print("\n[DATOS CRUDOS DE TELEMETRÍA (TOOL PAYLOAD)]:")
         for key, value in final_result["tool_payload"].items():
             print(f"  * {key}: {value}")
+
+    if final_result.get("incident_report"):
+        print("\n[INFORME TÉCNICO ESTRUCTURADO (AGENTE SINTETIZADOR)]:")
+        for key, value in final_result["incident_report"].items():
+            print(f"  * {key.upper()}: {value}")
 
     print("=======================================================\n")
 
