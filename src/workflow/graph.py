@@ -1,4 +1,6 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
+
 from src.core.state import AgentState
 from src.nodes.processing_nodes import (
     input_cleaner_node,
@@ -12,10 +14,14 @@ from src.nodes.ai_nodes import (
     incident_synthesizer_node,
     notification_agent_node,
 )
-from src.workflow.router import check_validation_route, route_after_ai
+from src.workflow.router import (
+    check_validation_route,
+    route_after_ai,
+    route_after_human_review,
+)
 
 def create_agent_graph():
-    """Construye y compila el flujo completo del sistema multi-agente."""
+    """Construye y compila el flujo con memoria de checkpoints y Human-in-the-loop."""
     workflow = StateGraph(AgentState)
 
     # 1. Registrar Nodos
@@ -53,10 +59,27 @@ def create_agent_graph():
         }
     )
 
-    # 4. Cadena Multi-Agente: Tool -> Sintetizador -> Notificador -> Cierre
     workflow.add_edge("tool_executor", "incident_synthesizer")
-    workflow.add_edge("incident_synthesizer", "notification_agent")
+
+    # 4. Decisión tras la pausa humana (HITL)
+    workflow.add_conditional_edges(
+        "incident_synthesizer",
+        route_after_human_review,
+        {
+            "notification_agent": "notification_agent",
+            "final_processor": "final_processor"
+        }
+    )
+
     workflow.add_edge("notification_agent", "final_processor")
     workflow.add_edge("final_processor", END)
 
-    return workflow.compile()
+    # 5. Instanciar memoria de estado (Checkpointer)
+    checkpointer = MemorySaver()
+
+    # 6. Compilar indicando el punto de interrupción antes del despacho
+    # El flujo se detendrá automáticamente tras el análisis del sintetizador
+    return workflow.compile(
+        checkpointer=checkpointer,
+        interrupt_before=["notification_agent"]
+    )

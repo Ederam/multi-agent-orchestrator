@@ -109,3 +109,9 @@
 - **Contexto:** La fase de análisis debe concluir con una acción tangible hacia el equipo de soporte o monitoreo.
 - **Decisión:** Implementar el nodo `notification_agent_node`, que toma el dict generado por el sintetizador y lo transforma en un mensaje formateado listo para despacho a canales como Slack, Teams o Email.
 - **Consecuencia:** Cierre de extremo a extremo de un sistema multi-agente autónomo sin intervención humana.
+
+## ADR-013: Implementación de Human-in-the-loop (HITL) y Persistencia con MemorySaver
+
+- **Contexto:** Las acciones de notificación crítica y remediación operativa en producción no deben ejecutarse a ciegas sin el visto bueno de un operador humano calificado.
+- **Decisión:** Integrar `MemorySaver` como Checkpointer en el grafo y definir `interrupt_before=["notification_agent"]`. La interacción humana se captura mediante `app.update_state()` asociando la sesión a un `thread_id`.
+- **Consecuencia:** Capacidad de pausar, auditar y reanudar flujos agénticos de forma determinista y segura.

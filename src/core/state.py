@@ -8,7 +8,9 @@ class AgentState(TypedDict):
     required_tool: str | None
     tool_payload: dict | None
     incident_report: dict | None
-    notification_payload: dict | None  # Datos listos para despacho (asunto, canal, mensaje)
+    notification_payload: dict | None
+    human_approved: bool | None       # Decisión humana: True (Aprobado), False (Rechazado)
+    human_feedback: str | None       # Comentarios o correcciones del operador humano
     audit_log: Annotated[List[str], operator.add]
     retry_count: int
     is_valid: bool

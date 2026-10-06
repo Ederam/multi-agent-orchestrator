@@ -24,8 +24,8 @@ Construir una plataforma autónoma multi-agente basada en grafos de estado (Stat
 - [x] **Agente Analista / Sintetizador (Incident Reporter):** Transforma el payload crudo de telemetría en un reporte estructurado.
 - [x] **Agente Notificador:** Formatea y despacha la alerta automática hacia canales externos.
 
-### Fase 3: Evaluación, Supervisión y Human-in-the-loop (HITL) [PENDIENTE]
+### Fase 3: Evaluación, Supervisión y Human-in-the-loop (HITL) [EN CURSO]
 
-- [ ] **Persistencia y Checkpointers:** Implementación de memoria de estado con `MemorySaver` / SQLite.
-- [ ] **Human-in-the-loop (HITL):** Puntos de interrupción (_interrupt_before_) para aprobación humana antes de acciones críticas (ej. reiniciar servicios o reiniciar pods).
-- [ ] **Observabilidad y Trazabilidad:** Monitoreo de latencias, auditoría y métricas de ejecución.
+- [x] **Persistencia y Checkpointers:** Implementación de memoria de estado con `MemorySaver` y gestión de `thread_id`.
+- [x] **Human-in-the-loop (HITL):** Puntos de interrupción (_interrupt_before_) para aprobación humana antes de acciones críticas.
+- [ ] **Observabilidad y Trazabilidad:** Integración de métricas de ejecución y exportación de logs estructurados.
