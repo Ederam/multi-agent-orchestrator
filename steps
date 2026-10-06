@@ -75,3 +75,59 @@ Instalar el SDK de Google GenAI / LangChain Gemini:
 
 Bash
 pip install langchain-google-genai python-dotenv
+
+Mapa de la Nueva Arquitectura del Proyecto
+Organizamos el código bajo src/ aplicando separación de capas:
+AI-MultiAgent-Core/
+├── .env
+├── .env.example
+├── .gitignore
+├── requirements.txt
+├── SETUP_ENV.md
+├── Lecciones_Aprendidas.md
+└── src/
+    ├── __init__.py
+    ├── core/
+    │   ├── __init__.py
+    │   ├── config.py           <-- Infra/Config (Carga de variables y settings)
+    │   └── state.py            <-- Dominio/Contratos (AgentState y reducers)
+    ├── services/
+    │   ├── __init__.py
+    │   └── llm_service.py      <-- Adaptador Externo (Cliente Gemini / LangChain)
+    ├── nodes/
+    │   ├── __init__.py
+    │   ├── processing_nodes.py <-- Casos de uso / Nodos deterministas
+    │   └── ai_nodes.py         <-- Nodos con invocación a LLM
+    ├── workflow/
+    │   ├── __init__.py
+    │   ├── router.py           <-- Aristas condicionales y reglas de bifurcación
+    │   └── graph.py            <-- Ensamblador del Grafo (StateGraph)
+    └── main.py                 <-- Punto de entrada / Bootstrapper
+
+
+Creación de Directorios y Archivos
+Ejecuta estos comandos en tu terminal de PowerShell en la raíz del proyecto (C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core):
+
+# Crear las carpetas de las capas
+mkdir src\core, src\services, src\nodes, src\workflow -Force
+
+# Crear los archivos __init__.py para los módulos
+New-Item -Path "src\__init__.py" -ItemType File -Force
+New-Item -Path "src\core\__init__.py" -ItemType File -Force
+New-Item -Path "src\services\__init__.py" -ItemType File -Force
+New-Item -Path "src\nodes\__init__.py" -ItemType File -Force
+New-Item -Path "src\workflow\__init__.py" -ItemType File -Force
+
+# Crear los archivos de lógica
+New-Item -Path "src\core\config.py" -ItemType File -Force
+New-Item -Path "src\core\state.py" -ItemType File -Force
+New-Item -Path "src\services\llm_service.py" -ItemType File -Force
+New-Item -Path "src\nodes\processing_nodes.py" -ItemType File -Force
+New-Item -Path "src\nodes\ai_nodes.py" -ItemType File -Force
+New-Item -Path "src\workflow\router.py" -ItemType File -Force
+New-Item -Path "src\workflow\graph.py" -ItemType File -Force
+
+python src/main.py
+
+ejecutar:
+python -m src.main

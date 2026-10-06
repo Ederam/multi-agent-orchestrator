@@ -23,3 +23,9 @@
 - **Consecuencia:**
   1. Permite bifurcar la ejecución hacia nodos especializados (`tech_support` vs `general_info`).
   2. La función del router mapea cadenas de caracteres a los identificadores exactos de los nodos de destino registrados en el grafo.
+
+## ADR-004: Modularización y Aplicación de Clean Architecture
+
+- **Contexto:** Mantener todo el grafo, servicios LLM, lógica de nodos y DTOs en un único archivo `main.py` generaba alto acoplamiento e impedía el escalamiento del sistema multi-agente.
+- **Decisión:** Segmentar en capas modulares bajo `src/`: `core` (estado y configuración), `services` (adaptador Gemini), `nodes` (lógica de negocio y llamadas LLM) y `workflow` (ensamblado del grafo y enrutador).
+- **Consecuencia:** Mayor testeabilidad unitaria de nodos, desacoplamiento del cliente de IA y facilidad para agregar nuevos agentes especializados sin modificar el punto de entrada.

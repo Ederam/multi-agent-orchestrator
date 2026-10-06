@@ -162,3 +162,14 @@ git push -u origin main
 
 git add src/main.py
 git commit -m "feat: integrar cliente ChatGoogleGenerativeAI y nodo gemini_enricher con manejo de fallbacks"
+
+git commit -m "feat: integrar cliente ChatGoogleGenerativeAI y nodo gemini_enricher con manejo de fallbacks, se agregan los pasos en la documentacion"
+git push -u origin main
+
+git add Lecciones_Aprendidas.md
+git commit -m "docs: registrar ADR-004 sobre modularizacion con arquitectura limpia"
+
+git add src/
+git status
+git add .
+git commit -m "refactor: estructurar proyecto en modulos core, services, nodes y workflow segun clean architecture"

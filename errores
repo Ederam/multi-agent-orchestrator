@@ -1,0 +1,9 @@
+(.venv) PS C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core> python src/main.py
+Traceback (most recent call last):
+  File "C:\DEV_ER\Mis Archivos\Projects\AI-MultiAgent-Core\src\main.py", line 1, in <module>
+    from src.core.state import AgentState
+ModuleNotFoundError: No module named 'src'
+
+SOlucion:
+python -m src.main
+
