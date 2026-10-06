@@ -173,3 +173,31 @@ git add src/
 git status
 git add .
 git commit -m "refactor: estructurar proyecto en modulos core, services, nodes y workflow segun clean architecture"
+
+git add Lecciones_Aprendidas.md
+git commit -m "docs: registrar ADR-005 sobre resolucion de certificados SSL con certifi"
+
+git add src/services/llm_service.py
+git commit -m "fix: configurar certifi bundle para llamadas TLS seguras a gemini"
+
+git add Lecciones_Aprendidas.md src/
+git commit -m "feat: implementar patron tool calling con telemetria de servicios y arista condicional"
+
+git add src/nodes/processing_nodes.py
+git commit -m "fix: restaurar nodos de procesamiento y consolidar tool_execution_node"
+
+git add HOJA_DE_RUTA.md Lecciones_Aprendidas.md src/
+git commit -m "feat: agregar hoja de ruta funcional e implementar agente sintetizador de incidentes"
+git push origin main
+
+git add HOJA_DE_RUTA.md Lecciones_Aprendidas.md src/
+git commit -m "feat: completar fase 2 con agente notificador y despacho estructurado"
+git push origin main
+
+git add HOJA_DE_RUTA.md Lecciones_Aprendidas.md src/
+git commit -m "feat: implementar persistencia con checkpointers y patron human-in-the-loop hitl"
+git push origin main
+
+git add .gitignore HOJA_DE_RUTA.md Lecciones_Aprendidas.md src/
+git commit -m "feat: completar fase 3 con observabilidad telemetria y exportacion de auditoria json"
+git push origin main

@@ -131,3 +131,91 @@ python src/main.py
 
 ejecutar:
 python -m src.main
+
+# Instalar y configurar certifi
+pip install certifi
+
+python -m src.main
+
+# Instalar pip-system-certs en el entorno virtual
+pip install pip-system-certs certifi
+
+pip install httpx
+
+# Desinstalar pip-system-certs
+pip uninstall pip-system-certs -y
+
+¿Qué es Tool Calling en Sistemas Multi-Agente?
++---------------------------------------------+
+       |             Nodo Analista / Router          |
+       +---------------------------------------------+
+                              |
+                     ¿Requiere datos externos?
+                     /                       \
+                  SÍ                          NO
+                  /                             \
+                 v                               v
+    +--------------------------+     +------------------------+
+    |   Nodo Tool Executor     |     |  Nodo Final Processor  |
+    | (Consulta BD o Servicio) |     +------------------------+
+    +--------------------------+                 |
+                 |                               v
+                 +----------> [Re-evaluar]      END
+
+
+New-Item -Path "src\services\tools.py" -ItemType File -Force
+
+
+resumen hoja de ruta
+[START]
+   │
+   ▼
+[input_cleaner] ──► [validator] ──(válido)──► [gemini_enricher]
+                          ▲                          │
+                          │                          ▼
+                    [auto_fixer]              ¿Requiere Tool?
+                                              ├── SÍ ──► [tool_executor]
+                                              │                │
+                                              │                ▼
+                                              │      [incident_synthesizer] ◄── NUEVO AGENTE
+                                              │                │
+                                              └── NO ──────────┤
+                                                               ▼
+                                                       [final_processor] ──► [END]
+
+Creacion de archivo funcional como Hoja de ruta
+New-Item -Path "HOJA_DE_RUTA.md" -ItemType File -Force
+
+HACIA DONDE VAMOS CON NUESTRO DESARROLLO
+Prompt Inicial
+       │
+       ▼
+ [ 1. Router / Clasificador ]  ──► "Esto es un fallo de pagos. Necesitamos métricas."
+       │
+       ▼
+ [ 2. Agente Consultor (Tool) ] ──► Va y consulta la base de datos/API real (¡Cero alucinación!)
+       │
+       ▼
+ [ 3. Agente Analista ]         ──► Recibe los datos reales y evalúa: "Severidad P1, impacto crítico."
+       │
+       ▼
+ [ 4. Agente Notificador ]      ──► Redacta la plantilla y envía la alerta al canal adecuado.
+
+ # Persistencia de Memoria y Human-in-the-Loop (HITL)
+ [START] ──► [cleaner] ──► [validator] ──► [router] ──► [tool] ──► [synthesizer]
+                                                                        │
+                                                                        ▼
+                                                           ⏸️ [PAUSA HITL: interrupt_before]
+                                                           (Espera confirmación de un humano)
+                                                                        │
+                                                           ┌────────────┴────────────┐
+                                                           ▼                         ▼
+                                                      [APROBADO]                [RECHAZADO]
+                                                           │                         │
+                                                           ▼                         ▼
+                                                  [notification_agent]             [END]
+
+
+# Crear el Módulo de Observabilidad (src/services/telemetry.py)
+Crea el archivo src/services/telemetry.py en tu terminal:
+New-Item -Path "src\services\telemetry.py" -ItemType File -Force
