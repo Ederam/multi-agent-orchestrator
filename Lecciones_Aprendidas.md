@@ -115,3 +115,9 @@
 - **Contexto:** Las acciones de notificación crítica y remediación operativa en producción no deben ejecutarse a ciegas sin el visto bueno de un operador humano calificado.
 - **Decisión:** Integrar `MemorySaver` como Checkpointer en el grafo y definir `interrupt_before=["notification_agent"]`. La interacción humana se captura mediante `app.update_state()` asociando la sesión a un `thread_id`.
 - **Consecuencia:** Capacidad de pausar, auditar y reanudar flujos agénticos de forma determinista y segura.
+
+## ADR-014: Observabilidad, Telemetría y Exportación de Auditoría Estructurada
+
+- **Contexto:** En entornos productivos, los sistemas multi-agente requieren trazabilidad determinista auditable por herramientas de SIEM/APM.
+- **Decisión:** Implementar `ExecutionTracer` en `src/services/telemetry.py` para medir duraciones por nodo, registrar decisiones de HITL y exportar un snapshot estructurado en formato JSON.
+- **Consecuencia:** Cumplimiento de estándares de observabilidad y auditoría forense para incidentes backend.

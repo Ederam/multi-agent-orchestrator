@@ -13,3 +13,7 @@ env/
 # Caché de Python
 __pycache__/
 *.pyc
+
+# Archivos de auditoría y trazas de observabilidad
+logs/
+*.json
